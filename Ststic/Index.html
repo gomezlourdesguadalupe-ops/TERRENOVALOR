@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasación de Lotes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Spectral+SC:wght@600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F2EFE6;
+    --paper-line: #DCD7C6;
+    --ink: #1C1B19;
+    --ink-soft: #5B564B;
+    --topo: #3A5A40;
+    --topo-deep: #28401E;
+    --stamp: #C1521F;
+    --stamp-soft: #E8D9C8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', serif;
+  }
+
+  body {
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px);
+    min-height: 100vh;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- Header ---------- */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 28px 32px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand-mark {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .brand-mark .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--topo);
+    letter-spacing: 0.08em;
+    border: 1px solid var(--topo);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Spectral SC', serif;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+
+  .coords-live {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  /* ---------- Layout ---------- */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 880px) {
+    main { grid-template-columns: 1fr; }
+    .panel-form { border-right: none !important; }
+  }
+
+  .panel-form, .panel-result {
+    padding: 32px;
+  }
+
+  .panel-form {
+    border-right: 1px dashed var(--ink-soft);
+  }
+
+  .field-group {
+    margin-bottom: 22px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--topo-deep);
+    margin-bottom: 6px;
+  }
+
+  label .opt {
+    color: var(--ink-soft);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  input[type="number"], input[type="text"], input[type="date"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 2px solid var(--ink);
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  input:focus {
+    outline: none;
+    border-bottom-color: var(--topo);
+    background: rgba(58, 90, 64, 0.06);
+  }
+
+  input::placeholder { color: #B7B0A0; }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--topo);
+    cursor: pointer;
+  }
+
+  .checkbox-row label {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .map-btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .ghost-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--ink-soft);
+    color: var(--ink-soft);
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .ghost-btn:hover {
+    border-color: var(--topo);
+    color: var(--topo-deep);
+  }
+
+  #zona-preview {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--topo-deep);
+    margin-top: 8px;
+    min-height: 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 16px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: 'Spectral SC', serif;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .submit-btn:hover { background: var(--topo-deep); }
+  .submit-btn:disabled { background: var(--ink-soft); cursor: wait; }
+
+  /* ---------- Resultado ---------- */
+  .panel-result {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .result-empty {
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    text-align: center;
+    padding: 40px 20px;
+    border: 1px dashed var(--paper-line);
+  }
+
+  .stamp-block {
+    border: 3px solid var(--stamp);
+    padding: 24px;
+    position: relative;
+    background: var(--stamp-soft);
+  }
+
+  .stamp-block::before {
+    content: "ESTIMACIÓN";
+    position: absolute;
+    top: -11px;
+    left: 20px;
+    background: var(--paper);
+    padding: 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--stamp);
+  }
+
+  .result-zona {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+
+  .result-total {
+    font-family: 'Spectral', serif;
+    font-weight: 700;
+    font-size: 42px;
+    color: var(--stamp);
+    line-height: 1.1;
+    margin: 6px 0 4px;
+  }
+
+  .result-permil {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .factores-table {
+    margin-top: 24px;
+  }
+
+  .factores-table h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 6px;
+    margin: 0 0 10px;
+  }
+
+  .factor-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--paper-line);
+  }
+
+  .factor-row.total {
+    font-weight: 700;
+    border-bottom: 2px solid var(--ink);
+    margin-top: 4px;
+  }
+
+  .factor-row .val.up { color: var(--topo-deep); }
+  .factor-row .val.down { color: var(--stamp); }
+
+  .disclaimer {
+    margin-top: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    border-top: 1px dashed var(--paper-line);
+    padding-top: 14px;
+  }
+
+  .error-block {
+    border: 2px solid var(--stamp);
+    color: var(--stamp);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-mark">
+    <span class="num">N.º 01</span>
+    <div>
+      <h1>Tasación de Lotes</h1>
+      <div class="subtitle">cálculo por zona &amp; coeficientes — modelo estimativo</div>
+    </div>
+  </div>
+  <div class="coords-live" id="coords-live">lat —, lon —</div>
+</header>
+
+<main>
+  <section class="panel-form">
+    <form id="form-tasacion">
+
+      <div class="field-group">
+        <label>Ubicación del lote</label>
+        <div class="field-row">
+          <div>
+            <label class="opt">Latitud</label>
+            <input type="number" step="0.0001" id="lat" placeholder="-34.6037" required>
+          </div>
+          <div>
+            <label class="opt">Longitud</label>
+            <input type="number" step="0.0001" id="lon" placeholder="-58.3816" required>
+          </div>
+        </div>
+        <div class="map-btn-row">
+          <button type="button" class="ghost-btn" id="btn-geo">Usar mi ubicación</button>
+          <button type="button" class="ghost-btn" id="btn-ver-zonas">Ver zonas cargadas</button>
+        </div>
+        <div id="zona-preview"></div>
+      </div>
+
+      <div class="field-group">
+        <label>Superficie total <span class="opt">(m²)</span></label>
+        <input type="number" step="0.01" id="superficie" placeholder="300" required>
+      </div>
+
+      <div class="field-group">
+        <div class="field-row">
+          <div>
+            <label>Frente <span class="opt">(m)</span></label>
+            <input type="number" step="0.01" id="frente" placeholder="12" required>
+          </div>
+          <div>
+            <label>Fondo <span class="opt">(m, opcional)</span></label>
+            <input type="number" step="0.01" id="fondo" placeholder="25">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="checkbox-row">
+          <input type="checkbox" id="esquina">
+          <label for="esquina">El lote está en esquina</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Fecha del dato de zona <span class="opt">(opcional)</span></label>
+        <input type="date" id="fecha-dato">
+      </div>
+
+      <button type="submit" class="submit-btn" id="btn-submit">Calcular tasación</button>
+    </form>
+  </section>
+
+  <section class="panel-result" id="panel-result">
+    <div class="result-empty" id="result-empty">
+      Completá los datos del lote<br>y presioná «Calcular tasación»<br>para ver el resultado acá.
+    </div>
+  </section>
+</main>
+
+<script>
+  const API_BASE = window.location.origin;
+
+  const form = document.getElementById('form-tasacion');
+  const btnSubmit = document.getElementById('btn-submit');
+  const panelResult = document.getElementById('panel-result');
+  const coordsLive = document.getElementById('coords-live');
+  const zonaPreview = document.getElementById('zona-preview');
+
+  const latInput = document.getElementById('lat');
+  const lonInput = document.getElementById('lon');
+
+  function actualizarCoordsLive() {
+    const lat = latInput.value || '—';
+    const lon = lonInput.value || '—';
+    coordsLive.textContent = `lat ${lat}, lon ${lon}`;
+  }
+  latInput.addEventListener('input', actualizarCoordsLive);
+  lonInput.addEventListener('input', actualizarCoordsLive);
+
+  document.getElementById('btn-geo').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      zonaPreview.textContent = 'Geolocalización no disponible en este navegador.';
+      return;
+    }
+    zonaPreview.textContent = 'Obteniendo ubicación...';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        latInput.value = pos.coords.latitude.toFixed(4);
+        lonInput.value = pos.coords.longitude.toFixed(4);
+        actualizarCoordsLive();
+        zonaPreview.textContent = 'Ubicación cargada.';
+      },
+      () => { zonaPreview.textContent = 'No se pudo obtener la ubicación.'; }
+    );
+  });
+
+  document.getElementById('btn-ver-zonas').addEventListener('click', async () => {
+    zonaPreview.textContent = 'Cargando zonas...';
+    try {
+      const res = await fetch(`${API_BASE}/zonas`);
+      const zonas = await res.json();
+      zonaPreview.innerHTML = zonas.map(z =>
+        `${z.nombre}: u$s${z.precio_base_m2}/m² (radio ${z.radio_km} km)`
+      ).join('<br>');
+    } catch (e) {
+      zonaPreview.textContent = 'No se pudieron cargar las zonas. ¿La API está corriendo?';
+    }
+  });
+
+  function factorRow(label, value) {
+    const pct = ((value - 1) * 100).toFixed(1);
+    const sign = pct > 0 ? '+' : '';
+    const cls = value >= 1 ? 'up' : 'down';
+    return `<div class="factor-row"><span>${label}</span><span class="val ${cls}">${sign}${pct}%</span></div>`;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'Calculando...';
+
+    const body = {
+      lat: parseFloat(latInput.value),
+      lon: parseFloat(lonInput.value),
+      superficie_m2: parseFloat(document.getElementById('superficie').value),
+      frente_m: parseFloat(document.getElementById('frente').value),
+      es_esquina: document.getElementById('esquina').checked,
+    };
+    const fondo = document.getElementById('fondo').value;
+    if (fondo) body.fondo_m = parseFloat(fondo);
+    const fecha = document.getElementById('fecha-dato').value;
+    if (fecha) body.fecha_dato_zona = fecha;
+
+    try {
+      const res = await fetch(`${API_BASE}/tasar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.detail ? JSON.stringify(errData.detail) : `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+      const precioM2Fmt = data.precio_base_m2.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+      const totalFmt = data.tasacion_estimada.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+      const m2Fmt = data.precio_m2_ajustado.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+
+      panelResult.innerHTML = `
+        <div class="stamp-block">
+          <div class="result-zona">${data.zona.nombre} · base u$s${precioM2Fmt}/m²</div>
+          <div class="result-total">u$s ${totalFmt}</div>
+          <div class="result-permil">u$s ${m2Fmt} /m² ajustado · ${data.superficie_m2} m²</div>
+
+          <div class="factores-table">
+            <h3>Coeficientes aplicados</h3>
+            ${factorRow('Frente', data.factores.frente)}
+            ${factorRow('Forma del lote', data.factores.forma)}
+            ${factorRow('Esquina', data.factores.esquina)}
+            ${factorRow('Antigüedad del dato', data.factores.antiguedad_dato)}
+            <div class="factor-row total"><span>Factor total</span><span>${data.factores.total}×</span></div>
+          </div>
+
+          <div class="disclaimer">
+            Estimación por fórmula configurable. No reemplaza una tasación profesional
+            ni un avalúo legal. Validar con datos de mercado y tasador matriculado.
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      panelResult.innerHTML = `
+        <div class="error-block">
+          No se pudo calcular la tasación.<br><br>
+          ${err.message}<br><br>
+          Verificá que la API esté corriendo y que los datos sean correctos.
+        </div>
+      `;
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Calcular tasación';
+    }
+  });
+</script>
+
+</body>
+          </html>
+          
