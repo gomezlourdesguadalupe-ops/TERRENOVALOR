@@ -1,15 +1,21 @@
 """
 Lógica de tasación de lotes.
 
-La fórmula es transparente y editable:
+La fórmula, en líneas generales:
 
-    precio_total = precio_base_m2(zona) * superficie * factores_ajuste
+    valor_terreno = precio_base_m2(zona) * superficie * factores_de_lote
+    valor_construccion = valor_terreno * % según estado y antigüedad (si aplica)
+    tasacion_estimada = valor_terreno + valor_construccion
+    (y se contrasta contra el promedio de comparables de la zona, si hay)
 
-Factores de ajuste (multiplicativos, parten de 1.0):
+Factores de ajuste del LOTE (multiplicativos, parten de 1.0):
     - frente_factor: lotes con más metros de frente valen más (frente angosto penaliza)
     - esquina_factor: un lote en esquina suma valor
     - forma_factor: lotes irregulares (poco frente respecto al fondo) penalizan
     - antiguedad_dato_factor: si el precio de la zona es viejo, se aplica corrección
+    - inundable_factor: penaliza si la zona es inundable
+    - nivel_adquisitivo_factor: ajusta según el poder adquisitivo típico de la zona
+    - servicios_factor: ajusta según cuántos servicios públicos tiene el lote
 
 Todos los coeficientes están centralizados en `COEFICIENTES` para que sea fácil
 ajustarlos sin tocar la lógica.
@@ -19,19 +25,50 @@ import math
 from datetime import date
 from typing import Optional
 
-from zonas import ZONAS, PRECIO_BASE_DEFAULT_M2
+from zonas import (
+    ZONAS,
+    PRECIO_BASE_DEFAULT_M2,
+    SERVICIOS_DEFAULT,
+    NIVEL_ADQUISITIVO_DEFAULT,
+)
+from comparables import comparables_de_zona
 
 # ---------------------------------------------------------------------------
 # Coeficientes de la fórmula (ajustables)
 # ---------------------------------------------------------------------------
 COEFICIENTES = {
-    "esquina_bonus": 0.08,           # +8% si el lote es esquina
-    "frente_ideal_m": 10.0,          # frente de referencia "normal"
-    "frente_penalizacion_max": 0.15, # hasta -15% si el frente es muy angosto
-    "frente_bonus_max": 0.10,        # hasta +10% si el frente es muy amplio
-    "fondo_frente_ratio_ideal": 2.5, # relación fondo/frente considerada "normal"
-    "forma_penalizacion_max": 0.10,  # hasta -10% por lote desproporcionado
-    "depreciacion_anual_dato": 0.02, # 2% anual de ajuste si el dato de zona es viejo
+    "esquina_bonus": 0.08,             # +8% si el lote es esquina
+    "frente_ideal_m": 10.0,            # frente de referencia "normal"
+    "frente_penalizacion_max": 0.15,   # hasta -15% si el frente es muy angosto
+    "frente_bonus_max": 0.10,          # hasta +10% si el frente es muy amplio
+    "fondo_frente_ratio_ideal": 2.5,   # relación fondo/frente considerada "normal"
+    "forma_penalizacion_max": 0.10,    # hasta -10% por lote desproporcionado
+    "depreciacion_anual_dato": 0.02,   # 2% anual de ajuste si el dato de zona es viejo
+
+    # --- Nuevos factores ---
+    "inundable_penalizacion": 0.20,    # -20% si la zona/lote es inundable
+
+    # Ajuste según nivel adquisitivo típico de la zona
+    "nivel_adquisitivo_factor": {
+        "alto": 1.05,
+        "medio": 1.00,
+        "bajo": 0.90,
+    },
+
+    # Cada servicio faltante penaliza este % (sobre 5 servicios posibles = hasta -25%)
+    "penalizacion_por_servicio_faltante": 0.05,
+
+    # Construcción: % de valor adicional sobre el valor del terreno,
+    # según el estado de la construcción, antes de aplicar antigüedad.
+    "construccion_pct_por_estado": {
+        "excelente": 0.60,
+        "bueno": 0.40,
+        "regular": 0.20,
+        "malo": 0.08,
+    },
+    # Depreciación de la construcción por año de antigüedad (no del terreno)
+    "construccion_depreciacion_anual": 0.015,  # 1.5% anual
+    "construccion_depreciacion_max": 0.70,     # tope: no pierde más del 70% de su valor
 }
 
 
@@ -69,6 +106,9 @@ def encontrar_zona(lat: float, lon: float) -> dict:
         "id": "fuera_de_cobertura",
         "nombre": f"Fuera de cobertura (más cercana: {zona_mas_cercana['nombre'] if zona_mas_cercana else 'N/A'})",
         "precio_base_m2": PRECIO_BASE_DEFAULT_M2,
+        "inundable": zona_mas_cercana["inundable"] if zona_mas_cercana else False,
+        "nivel_adquisitivo": zona_mas_cercana["nivel_adquisitivo"] if zona_mas_cercana else NIVEL_ADQUISITIVO_DEFAULT,
+        "servicios_tipicos": zona_mas_cercana["servicios_tipicos"] if zona_mas_cercana else dict(SERVICIOS_DEFAULT),
     }
 
 
@@ -80,11 +120,9 @@ def _factor_frente(frente_m: float) -> float:
     diferencia_relativa = (frente_m - ideal) / ideal
 
     if diferencia_relativa < 0:
-        # Frente angosto: penaliza, tope en frente_penalizacion_max
         penalizacion = min(abs(diferencia_relativa), 1.0) * COEFICIENTES["frente_penalizacion_max"]
         return 1.0 - penalizacion
     else:
-        # Frente amplio: bonifica, tope en frente_bonus_max
         bonus = min(diferencia_relativa, 1.0) * COEFICIENTES["frente_bonus_max"]
         return 1.0 + bonus
 
@@ -110,6 +148,143 @@ def _factor_antiguedad_dato(fecha_dato: Optional[date]) -> float:
     return max(0.5, 1.0 - años * COEFICIENTES["depreciacion_anual_dato"])
 
 
+def _factor_inundable(es_inundable: bool) -> float:
+    """Penaliza si el lote/zona es inundable."""
+    if es_inundable:
+        return 1.0 - COEFICIENTES["inundable_penalizacion"]
+    return 1.0
+
+
+def _factor_nivel_adquisitivo(nivel: str) -> float:
+    """Ajusta según el poder adquisitivo típico de la zona."""
+    tabla = COEFICIENTES["nivel_adquisitivo_factor"]
+    return tabla.get(nivel, tabla.get(NIVEL_ADQUISITIVO_DEFAULT, 1.0))
+
+
+def _factor_servicios(servicios: dict) -> float:
+    """
+    Penaliza por cada servicio público faltante (luz, agua de red, cloacas,
+    gas de red, transporte público). Si tiene los 5, factor = 1.0.
+    """
+    faltantes = sum(1 for disponible in servicios.values() if not disponible)
+    penalizacion = faltantes * COEFICIENTES["penalizacion_por_servicio_faltante"]
+    return max(0.0, 1.0 - penalizacion)
+
+
+def _resolver_servicios(servicios_lote: Optional[dict], servicios_zona: Optional[dict]) -> dict:
+    """
+    Combina los servicios informados puntualmente para el lote con los
+    típicos de la zona. Lo que el lote especifica tiene prioridad;
+    lo que no especifica, se completa con el dato de la zona (o el default).
+    """
+    base = dict(servicios_zona) if servicios_zona else dict(SERVICIOS_DEFAULT)
+    if servicios_lote:
+        for clave, valor in servicios_lote.items():
+            if valor is not None:
+                base[clave] = valor
+    return base
+
+
+def _valor_construccion(
+    valor_terreno: float,
+    tiene_construccion: bool,
+    estado_construccion: Optional[str],
+    antiguedad_construccion_anios: Optional[float],
+    superficie_construida_m2: Optional[float],
+    superficie_m2: float,
+) -> dict:
+    """
+    Calcula el valor adicional por construcción existente, como % del valor
+    del terreno, ajustado por estado y antigüedad. Si no hay construcción,
+    devuelve 0.
+    """
+    if not tiene_construccion:
+        return {"valor": 0.0, "pct_aplicado": 0.0, "detalle": "Sin construcción"}
+
+    estado = (estado_construccion or "regular").lower()
+    tabla_estado = COEFICIENTES["construccion_pct_por_estado"]
+    pct_base = tabla_estado.get(estado, tabla_estado["regular"])
+
+    # Si se informa superficie construida, no puede "valer" más que si cubriera
+    # todo el lote; escalamos el % según qué proporción del lote está construida.
+    if superficie_construida_m2 and superficie_m2 > 0:
+        proporcion_construida = min(superficie_construida_m2 / superficie_m2, 1.0)
+    else:
+        proporcion_construida = 1.0  # si no se informa, asumimos que aprovecha el % completo
+
+    antiguedad = antiguedad_construccion_anios or 0.0
+    depreciacion = min(
+        antiguedad * COEFICIENTES["construccion_depreciacion_anual"],
+        COEFICIENTES["construccion_depreciacion_max"],
+    )
+
+    pct_final = pct_base * proporcion_construida * (1.0 - depreciacion)
+    valor = valor_terreno * pct_final
+
+    return {
+        "valor": round(valor, 2),
+        "pct_aplicado": round(pct_final, 4),
+        "detalle": (
+            f"Estado: {estado}, antigüedad: {antiguedad:.0f} años, "
+            f"superficie construida: {superficie_construida_m2 or 'no informada'} m²"
+        ),
+    }
+
+
+def _comparar_con_mercado(zona_id: str, precio_m2_estimado: float, superficie_m2: float) -> dict:
+    """
+    Busca comparables cargados para la zona y contrasta el precio_m2 estimado
+    contra el promedio de mercado. Devuelve al menos 2 comparables si existen.
+    """
+    comparables = comparables_de_zona(zona_id)
+
+    if not comparables:
+        return {
+            "disponible": False,
+            "cantidad": 0,
+            "comparables": [],
+            "precio_m2_promedio_mercado": None,
+            "diferencia_pct_vs_mercado": None,
+            "mensaje": "No hay comparables cargados para esta zona todavía.",
+        }
+
+    detalle = []
+    precios_m2 = []
+    for c in comparables:
+        precio_m2 = c["precio_publicado"] / c["superficie_m2"] if c["superficie_m2"] else None
+        if precio_m2:
+            precios_m2.append(precio_m2)
+        detalle.append({
+            "fuente": c["fuente"],
+            "direccion_aprox": c["direccion_aprox"],
+            "superficie_m2": c["superficie_m2"],
+            "precio_publicado": c["precio_publicado"],
+            "moneda": c["moneda"],
+            "fecha": c["fecha"],
+            "precio_m2": round(precio_m2, 2) if precio_m2 else None,
+            "link": c.get("link"),
+        })
+
+    precio_m2_promedio = sum(precios_m2) / len(precios_m2) if precios_m2 else None
+    diferencia_pct = None
+    if precio_m2_promedio:
+        diferencia_pct = round(
+            ((precio_m2_estimado - precio_m2_promedio) / precio_m2_promedio) * 100, 2
+        )
+
+    return {
+        "disponible": True,
+        "cantidad": len(detalle),
+        "comparables": detalle,
+        "precio_m2_promedio_mercado": round(precio_m2_promedio, 2) if precio_m2_promedio else None,
+        "diferencia_pct_vs_mercado": diferencia_pct,
+        "mensaje": (
+            f"Comparado contra {len(detalle)} aviso(s) de referencia "
+            f"(Zonaprop/Argenprop cargados manualmente)."
+        ),
+    }
+
+
 def tasar_lote(
     lat: float,
     lon: float,
@@ -118,38 +293,91 @@ def tasar_lote(
     fondo_m: Optional[float] = None,
     es_esquina: bool = False,
     fecha_dato_zona: Optional[date] = None,
+    es_inundable: Optional[bool] = None,
+    tiene_construccion: bool = False,
+    estado_construccion: Optional[str] = None,
+    antiguedad_construccion_anios: Optional[float] = None,
+    superficie_construida_m2: Optional[float] = None,
+    servicios: Optional[dict] = None,
 ) -> dict:
     """
     Calcula la tasación estimada de un lote.
 
     Devuelve un detalle completo: zona detectada, precio base, cada factor
-    aplicado y el resultado final, para que la tasación sea auditable.
+    aplicado, valor de construcción (si aplica), comparables de mercado y el
+    resultado final, para que la tasación sea auditable.
     """
     zona = encontrar_zona(lat, lon)
     precio_base_m2 = zona["precio_base_m2"]
+
+    # Si no se especifica inundabilidad puntual del lote, se usa el dato de la zona.
+    inundable_efectivo = es_inundable if es_inundable is not None else zona.get("inundable", False)
+    nivel_adquisitivo = zona.get("nivel_adquisitivo", NIVEL_ADQUISITIVO_DEFAULT)
+    servicios_resueltos = _resolver_servicios(servicios, zona.get("servicios_tipicos"))
 
     factor_frente = _factor_frente(frente_m)
     factor_forma = _factor_forma(frente_m, fondo_m)
     factor_esquina = 1.0 + COEFICIENTES["esquina_bonus"] if es_esquina else 1.0
     factor_antiguedad = _factor_antiguedad_dato(fecha_dato_zona)
+    factor_inundable = _factor_inundable(inundable_efectivo)
+    factor_nivel_adquisitivo = _factor_nivel_adquisitivo(nivel_adquisitivo)
+    factor_servicios = _factor_servicios(servicios_resueltos)
 
-    factor_total = factor_frente * factor_forma * factor_esquina * factor_antiguedad
+    factor_total = (
+        factor_frente
+        * factor_forma
+        * factor_esquina
+        * factor_antiguedad
+        * factor_inundable
+        * factor_nivel_adquisitivo
+        * factor_servicios
+    )
+
     precio_m2_ajustado = precio_base_m2 * factor_total
-    precio_total = precio_m2_ajustado * superficie_m2
+    valor_terreno = precio_m2_ajustado * superficie_m2
+
+    construccion = _valor_construccion(
+        valor_terreno=valor_terreno,
+        tiene_construccion=tiene_construccion,
+        estado_construccion=estado_construccion,
+        antiguedad_construccion_anios=antiguedad_construccion_anios,
+        superficie_construida_m2=superficie_construida_m2,
+        superficie_m2=superficie_m2,
+    )
+
+    tasacion_estimada = valor_terreno + construccion["valor"]
+
+    comparacion_mercado = _comparar_con_mercado(
+        zona_id=zona["id"],
+        precio_m2_estimado=precio_m2_ajustado,
+        superficie_m2=superficie_m2,
+    )
 
     return {
-        "zona": {"id": zona["id"], "nombre": zona["nombre"]},
+        "zona": {
+            "id": zona["id"],
+            "nombre": zona["nombre"],
+            "inundable": inundable_efectivo,
+            "nivel_adquisitivo": nivel_adquisitivo,
+        },
+        "servicios": servicios_resueltos,
         "precio_base_m2": round(precio_base_m2, 2),
         "factores": {
             "frente": round(factor_frente, 4),
             "forma": round(factor_forma, 4),
             "esquina": round(factor_esquina, 4),
             "antiguedad_dato": round(factor_antiguedad, 4),
+            "inundable": round(factor_inundable, 4),
+            "nivel_adquisitivo": round(factor_nivel_adquisitivo, 4),
+            "servicios": round(factor_servicios, 4),
             "total": round(factor_total, 4),
         },
         "precio_m2_ajustado": round(precio_m2_ajustado, 2),
         "superficie_m2": superficie_m2,
-        "tasacion_estimada": round(precio_total, 2),
+        "valor_terreno": round(valor_terreno, 2),
+        "construccion": construccion,
+        "tasacion_estimada": round(tasacion_estimada, 2),
+        "comparacion_mercado": comparacion_mercado,
         "moneda": "USD",
     }
-  
+    
