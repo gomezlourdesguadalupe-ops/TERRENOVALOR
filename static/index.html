@@ -3,541 +3,776 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tasación de Lotes</title>
+<title>Tasación de Lotes · Macedo Propiedades</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Spectral+SC:wght@600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #F2EFE6;
-    --paper-line: #DCD7C6;
-    --ink: #1C1B19;
-    --ink-soft: #5B564B;
-    --topo: #3A5A40;
-    --topo-deep: #28401E;
-    --stamp: #C1521F;
-    --stamp-soft: #E8D9C8;
+    --white:      #FFFFFF;
+    --off-white:  #F7F9F7;
+    --border:     #D8E8DC;
+    --border-mid: #B2CFB9;
+    --green-deep: #1A4D2E;
+    --green-mid:  #1F5E3B;
+    --green-soft: #2E7D4F;
+    --green-tint: #EBF4EE;
+    --green-tint2:#D4EADA;
+    --ink:        #111811;
+    --ink-mid:    #3D5040;
+    --ink-soft:   #6B7E6F;
+    --ink-ghost:  #9EB4A2;
+    --shadow-sm:  0 1px 4px rgba(26,77,46,.07);
+    --shadow-md:  0 4px 20px rgba(26,77,46,.10);
+    --shadow-lg:  0 8px 40px rgba(26,77,46,.13);
   }
 
-  * { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Spectral', serif;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
-    background-image:
-      repeating-linear-gradient(0deg, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px);
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
     min-height: 100vh;
   }
 
-  .mono { font-family: 'JetBrains Mono', monospace; }
-
-  /* ---------- Header ---------- */
+  /* ── Header ── */
   header {
-    border-bottom: 2px solid var(--ink);
-    padding: 28px 32px 20px;
+    background: var(--white);
+    border-bottom: 1.5px solid var(--border);
+    padding: 0 48px;
+    height: 76px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
   }
 
-  .brand-mark {
+  .header-left {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
+    flex-direction: column;
+    gap: 1px;
   }
 
-  .brand-mark .num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--topo);
-    letter-spacing: 0.08em;
-    border: 1px solid var(--topo);
-    padding: 2px 8px;
-    border-radius: 2px;
-  }
-
-  h1 {
-    font-family: 'Spectral SC', serif;
+  .header-eyebrow {
+    font-size: 10px;
     font-weight: 600;
-    font-size: 28px;
-    letter-spacing: 0.02em;
-    margin: 0;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
+    color: var(--green-soft);
   }
 
-  .subtitle {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--green-deep);
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+  }
+
+  /* Logo SVG inline */
+  .logo-mp {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+  }
+
+  .logo-mp svg {
+    height: 44px;
+    width: auto;
+  }
+
+  .logo-wordmark {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+  }
+
+  .logo-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-deep);
+  }
+
+  .logo-sub {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: var(--ink-soft);
-    letter-spacing: 0.04em;
   }
 
-  .coords-live {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--ink-soft);
-    text-align: right;
-  }
-
-  /* ---------- Layout ---------- */
+  /* ── Main layout ── */
   main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    max-width: 1180px;
+    max-width: 1280px;
     margin: 0 auto;
+    padding: 40px 48px 80px;
+    display: grid;
+    grid-template-columns: 520px 1fr;
+    gap: 40px;
+    align-items: start;
   }
 
-  @media (max-width: 880px) {
-    main { grid-template-columns: 1fr; }
-    .panel-form { border-right: none !important; }
+  /* ── Form column ── */
+  .form-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
-  .panel-form, .panel-result {
-    padding: 32px;
+  /* ── Section blocks ── */
+  .form-section {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease;
   }
 
-  .panel-form {
-    border-right: 1px dashed var(--ink-soft);
+  .form-section:focus-within {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-mid);
   }
 
-  .field-group {
-    margin-bottom: 22px;
+  .section-header {
+    padding: 16px 22px 14px;
+    background: var(--off-white);
+    border-bottom: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--green-mid);
+  }
+
+  .section-body {
+    padding: 22px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Field ── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 14px;
   }
 
-  label {
-    display: block;
-    font-family: 'JetBrains Mono', monospace;
+  .field label {
     font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--topo-deep);
-    margin-bottom: 6px;
+    color: var(--ink-mid);
   }
 
-  label .opt {
-    color: var(--ink-soft);
+  .field label .opt {
+    font-weight: 400;
     text-transform: none;
-    letter-spacing: normal;
+    letter-spacing: 0;
+    color: var(--ink-ghost);
+    font-size: 11px;
   }
 
-  input[type="number"], input[type="text"], input[type="date"] {
+  input[type="number"],
+  input[type="text"],
+  input[type="date"],
+  select {
     width: 100%;
-    padding: 10px 12px;
-    border: none;
-    border-bottom: 2px solid var(--ink);
-    background: transparent;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 15px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
     color: var(--ink);
-    transition: border-color 0.15s ease, background 0.15s ease;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
   }
 
-  input:focus {
+  input:focus, select:focus {
     outline: none;
-    border-bottom-color: var(--topo);
-    background: rgba(58, 90, 64, 0.06);
+    border-color: var(--green-mid);
+    background: var(--green-tint);
+    box-shadow: 0 0 0 3px rgba(31,94,59,.10);
   }
 
-  input::placeholder { color: #B7B0A0; }
+  input::placeholder { color: var(--ink-ghost); }
 
-  .checkbox-row {
+  /* ── Checkbox ── */
+  .checkbox-field {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 4px;
+    cursor: pointer;
+    user-select: none;
   }
 
-  .checkbox-row input[type="checkbox"] {
+  .checkbox-field input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--topo);
+    border: 1.5px solid var(--border-mid);
+    border-radius: 4px;
+    accent-color: var(--green-mid);
     cursor: pointer;
+    flex-shrink: 0;
   }
 
-  .checkbox-row label {
-    margin: 0;
-    cursor: pointer;
+  .checkbox-field span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
   }
 
-  .map-btn-row {
+  /* ── Ghost buttons ── */
+  .btn-row {
     display: flex;
     gap: 10px;
-    margin-top: 6px;
   }
 
   .ghost-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
-    background: none;
-    border: 1px solid var(--ink-soft);
-    color: var(--ink-soft);
-    padding: 7px 12px;
+    background: var(--white);
+    border: 1.5px solid var(--border-mid);
+    color: var(--ink-mid);
+    padding: 8px 14px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.15s;
   }
 
   .ghost-btn:hover {
-    border-color: var(--topo);
-    color: var(--topo-deep);
+    border-color: var(--green-mid);
+    color: var(--green-deep);
+    background: var(--green-tint);
   }
 
   #zona-preview {
-    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: var(--topo-deep);
-    margin-top: 8px;
-    min-height: 16px;
+    color: var(--green-deep);
+    font-weight: 500;
+    min-height: 14px;
+    padding: 4px 0;
   }
 
+  /* ── Submit button ── */
   .submit-btn {
     width: 100%;
-    margin-top: 8px;
     padding: 16px;
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--green-deep);
+    color: var(--white);
     border: none;
-    font-family: 'Spectral SC', serif;
-    font-size: 15px;
-    letter-spacing: 0.06em;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(26,77,46,.28);
+    margin-top: 4px;
   }
 
-  .submit-btn:hover { background: var(--topo-deep); }
-  .submit-btn:disabled { background: var(--ink-soft); cursor: wait; }
+  .submit-btn:hover {
+    background: var(--green-mid);
+    box-shadow: 0 6px 24px rgba(26,77,46,.36);
+    transform: translateY(-1px);
+  }
 
-  /* ---------- Resultado ---------- */
-  .panel-result {
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-btn:disabled {
+    background: var(--ink-ghost);
+    box-shadow: none;
+    cursor: wait;
+    transform: none;
+  }
+
+  /* ── Result column ── */
+  .result-col {
+    position: sticky;
+    top: 100px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 16px;
   }
 
+  /* ── Result section header (same style as form) ── */
+  .result-section {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .result-section .section-header {
+    background: var(--off-white);
+  }
+
+  /* ── Empty state ── */
   .result-empty {
-    color: var(--ink-soft);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    line-height: 1.8;
+    padding: 48px 32px;
     text-align: center;
-    padding: 40px 20px;
-    border: 1px dashed var(--paper-line);
+    color: var(--ink-ghost);
+    font-size: 13px;
+    line-height: 1.9;
   }
 
-  .stamp-block {
-    border: 3px solid var(--stamp);
-    padding: 24px;
-    position: relative;
-    background: var(--stamp-soft);
+  .result-empty-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.5;
   }
 
-  .stamp-block::before {
-    content: "ESTIMACIÓN";
-    position: absolute;
-    top: -11px;
-    left: 20px;
-    background: var(--paper);
-    padding: 0 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+  /* ── Main result card ── */
+  .result-main {
+    padding: 28px 28px 22px;
+  }
+
+  .result-zone-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-tint);
+    border: 1px solid var(--green-tint2);
+    color: var(--green-deep);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .result-price-label {
+    font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.12em;
-    color: var(--stamp);
-  }
-
-  .result-zona {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    text-transform: uppercase;
     color: var(--ink-soft);
     margin-bottom: 4px;
   }
 
   .result-total {
-    font-family: 'Spectral', serif;
-    font-weight: 700;
-    font-size: 42px;
-    color: var(--stamp);
-    line-height: 1.1;
-    margin: 6px 0 4px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 52px;
+    color: var(--green-deep);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
   }
 
   .result-permil {
-    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     color: var(--ink-soft);
+    font-weight: 400;
   }
 
-  .factores-table {
-    margin-top: 24px;
+  .result-permil strong {
+    color: var(--ink-mid);
+    font-weight: 600;
   }
 
-  .factores-table h3 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.08em;
+  /* ── Factors table ── */
+  .factores-section {
+    padding: 20px 28px 24px;
+    border-top: 1.5px solid var(--border);
+  }
+
+  .factores-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ink-soft);
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 6px;
-    margin: 0 0 10px;
+    margin-bottom: 14px;
   }
 
   .factor-row {
     display: flex;
     justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
     font-size: 13px;
-    padding: 5px 0;
-    border-bottom: 1px dotted var(--paper-line);
   }
 
-  .factor-row.total {
+  .factor-row:last-child { border-bottom: none; }
+
+  .factor-row .factor-name { color: var(--ink-mid); }
+
+  .factor-row .val {
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .factor-row .val.up   { color: var(--green-mid); }
+  .factor-row .val.down { color: #C1521F; }
+  .factor-row .val.neu  { color: var(--ink-soft); }
+
+  .factor-row.total-row {
+    background: var(--green-tint);
+    margin: 8px -28px 0;
+    padding: 10px 28px;
+    border-bottom: none;
+  }
+
+  .factor-row.total-row .factor-name {
     font-weight: 700;
-    border-bottom: 2px solid var(--ink);
-    margin-top: 4px;
+    color: var(--green-deep);
+    font-size: 13px;
   }
 
-  .factor-row .val.up { color: var(--topo-deep); }
-  .factor-row .val.down { color: var(--stamp); }
+  .factor-row.total-row .val {
+    font-size: 15px;
+    color: var(--green-deep);
+  }
 
+  /* ── Disclaimer ── */
   .disclaimer {
-    margin-top: 22px;
-    font-family: 'JetBrains Mono', monospace;
+    padding: 14px 28px;
+    background: var(--off-white);
+    border-top: 1.5px solid var(--border);
     font-size: 11px;
     color: var(--ink-soft);
-    line-height: 1.6;
-    border-top: 1px dashed var(--paper-line);
-    padding-top: 14px;
+    line-height: 1.7;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
   }
 
-  .error-block {
-    border: 2px solid var(--stamp);
-    color: var(--stamp);
-    font-family: 'JetBrains Mono', monospace;
+  .disclaimer-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+  /* ── Comparables section ── */
+  .comparables-body {
+    padding: 20px 22px 22px;
     font-size: 13px;
-    padding: 16px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  /* ── Error ── */
+  .error-block {
+    padding: 20px 22px;
+    background: #FFF5F2;
+    border: 1.5px solid #E8B4A0;
+    border-radius: 10px;
+    color: #8B2E0F;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* ── Coords live strip ── */
+  .coords-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--green-tint);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--green-deep);
+    font-weight: 500;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 980px) {
+    main {
+      grid-template-columns: 1fr;
+      padding: 28px 24px 60px;
+    }
+
+    .result-col { position: static; }
+
+    header { padding: 0 24px; }
+
+    .logo-wordmark { display: none; }
+  }
+
+  @media (max-width: 560px) {
+    .field-row { grid-template-columns: 1fr; }
+    .result-total { font-size: 38px; }
+    header { height: 64px; }
+    .header-title { font-size: 18px; }
   }
 </style>
 </head>
 <body>
 
+<!-- ══════════════ HEADER ══════════════ -->
 <header>
-  <div class="brand-mark">
-    <span class="num">N.º 01</span>
-    <div>
-      <h1>Tasación de Lotes</h1>
-      <div class="subtitle">cálculo por zona &amp; coeficientes — modelo estimativo</div>
-    </div>
+  <div class="header-left">
+    <div class="header-eyebrow">N.º 01 · Modelo Estimativo</div>
+    <div class="header-title">Tasación de Lotes</div>
   </div>
-  <div class="coords-live" id="coords-live">lat —, lon —</div>
+
+  <a class="logo-mp" href="#" title="Macedo Propiedades">
+    <!-- SVG logo MP inline -->
+    <svg viewBox="0 0 64 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MP">
+      <!-- M -->
+      <polyline points="4,48 4,8 20,32 36,8 36,48" stroke="#1A4D2E" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+      <!-- P -->
+      <polyline points="44,48 44,8" stroke="#1A4D2E" stroke-width="4" stroke-linecap="square" fill="none"/>
+      <path d="M44,8 Q62,8 62,20 Q62,32 44,32" stroke="#1A4D2E" stroke-width="4" stroke-linecap="square" fill="none"/>
+    </svg>
+    <div class="logo-wordmark">
+      <div class="logo-name">Macedo</div>
+      <div class="logo-sub">Propiedades</div>
+    </div>
+  </a>
 </header>
 
+<!-- ══════════════ MAIN ══════════════ -->
 <main>
-  <section class="panel-form">
+
+  <!-- ── FORMULARIO ── -->
+  <div class="form-col">
     <form id="form-tasacion">
 
-      <div class="field-group">
-        <label>Ubicación del lote</label>
-        <div class="field-row">
-          <div>
-            <label class="opt">Latitud</label>
-            <input type="number" step="0.0001" id="lat" placeholder="-34.6037" required>
-          </div>
-          <div>
-            <label class="opt">Longitud</label>
-            <input type="number" step="0.0001" id="lon" placeholder="-58.3816" required>
-          </div>
+      <!-- 📍 Ubicación -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📍</span>
+          <span class="section-label">Ubicación del lote</span>
         </div>
-        <div class="map-btn-row">
-          <button type="button" class="ghost-btn" id="btn-geo">Usar mi ubicación</button>
-          <button type="button" class="ghost-btn" id="btn-ver-zonas">Ver zonas cargadas</button>
-        </div>
-        <div id="zona-preview"></div>
-      </div>
-
-      <div class="field-group">
-        <label>Superficie total <span class="opt">(m²)</span></label>
-        <input type="number" step="0.01" id="superficie" placeholder="300" required>
-      </div>
-
-      <div class="field-group">
-        <div class="field-row">
-          <div>
-            <label>Frente <span class="opt">(m)</span></label>
-            <input type="number" step="0.01" id="frente" placeholder="12" required>
+        <div class="section-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Latitud</label>
+              <input type="number" step="0.0001" id="lat" placeholder="-34.6037" required>
+            </div>
+            <div class="field">
+              <label>Longitud</label>
+              <input type="number" step="0.0001" id="lon" placeholder="-58.3816" required>
+            </div>
           </div>
-          <div>
-            <label>Fondo <span class="opt">(m, opcional)</span></label>
-            <input type="number" step="0.01" id="fondo" placeholder="25">
+          <div class="btn-row">
+            <button type="button" class="ghost-btn" id="btn-geo">
+              <span>⊙</span> Usar mi ubicación
+            </button>
+            <button type="button" class="ghost-btn" id="btn-ver-zonas">
+              <span>⊞</span> Ver zonas cargadas
+            </button>
           </div>
+          <div id="zona-preview"></div>
         </div>
       </div>
 
-      <div class="field-group">
-        <div class="checkbox-row">
-          <input type="checkbox" id="esquina">
-          <label for="esquina">El lote está en esquina</label>
+      <!-- 📐 Características del lote -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📐</span>
+          <span class="section-label">Características del lote</span>
+        </div>
+        <div class="section-body">
+          <div class="field">
+            <label>Superficie total <span class="opt">(m²)</span></label>
+            <input type="number" step="0.01" id="superficie" placeholder="300" required>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Frente <span class="opt">(m)</span></label>
+              <input type="number" step="0.01" id="frente" placeholder="12" required>
+            </div>
+            <div class="field">
+              <label>Fondo <span class="opt">(m, opcional)</span></label>
+              <input type="number" step="0.01" id="fondo" placeholder="25">
+            </div>
+          </div>
+          <label class="checkbox-field">
+            <input type="checkbox" id="esquina">
+            <span>El lote está en esquina</span>
+          </label>
         </div>
       </div>
 
-      <div class="field-group">
-        <label>Fecha del dato de zona <span class="opt">(opcional)</span></label>
-        <input type="date" id="fecha-dato">
+      <!-- 🏡 Construcción -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">🏡</span>
+          <span class="section-label">Construcción</span>
+        </div>
+        <div class="section-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Superficie cubierta <span class="opt">(m², opcional)</span></label>
+              <input type="number" step="0.01" id="sup-cubierta" placeholder="0">
+            </div>
+            <div class="field">
+              <label>Año de construcción <span class="opt">(opcional)</span></label>
+              <input type="number" step="1" id="anio-construccion" placeholder="2005" min="1900" max="2025">
+            </div>
+          </div>
+          <div class="field">
+            <label>Estado general <span class="opt">(opcional)</span></label>
+            <select id="estado-construccion">
+              <option value="">— Sin construcción / No aplica —</option>
+              <option value="bueno">Bueno</option>
+              <option value="regular">Regular</option>
+              <option value="malo">A demoler / Mal estado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🚰 Servicios -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">🚰</span>
+          <span class="section-label">Servicios disponibles</span>
+        </div>
+        <div class="section-body">
+          <div class="field-row">
+            <label class="checkbox-field">
+              <input type="checkbox" id="srv-agua">
+              <span>Agua corriente</span>
+            </label>
+            <label class="checkbox-field">
+              <input type="checkbox" id="srv-luz">
+              <span>Luz eléctrica</span>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="checkbox-field">
+              <input type="checkbox" id="srv-gas">
+              <span>Gas de red</span>
+            </label>
+            <label class="checkbox-field">
+              <input type="checkbox" id="srv-cloaca">
+              <span>Cloacas</span>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="checkbox-field">
+              <input type="checkbox" id="srv-pavimento">
+              <span>Pavimento</span>
+            </label>
+            <label class="checkbox-field">
+              <input type="checkbox" id="srv-internet">
+              <span>Internet / fibra</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fecha del dato -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📅</span>
+          <span class="section-label">Fecha del dato de zona</span>
+        </div>
+        <div class="section-body">
+          <div class="field">
+            <label>Fecha de referencia <span class="opt">(opcional — para calcular antigüedad)</span></label>
+            <input type="date" id="fecha-dato">
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="submit-btn" id="btn-submit">Calcular tasación</button>
-    </form>
-  </section>
 
-  <section class="panel-result" id="panel-result">
-    <div class="result-empty" id="result-empty">
-      Completá los datos del lote<br>y presioná «Calcular tasación»<br>para ver el resultado acá.
+    </form>
+  </div>
+
+  <!-- ── RESULTADO ── -->
+  <div class="result-col" id="result-col">
+
+    <!-- 📊 Resultado de la tasación -->
+    <div class="result-section" id="result-section">
+      <div class="section-header">
+        <span class="section-icon">📊</span>
+        <span class="section-label">Resultado de la tasación</span>
+      </div>
+      <div id="result-body">
+        <div class="result-empty">
+          <span class="result-empty-icon">🏷️</span>
+          Completá los datos del lote<br>y presioná <strong>Calcular tasación</strong><br>para ver el resultado aquí.
+        </div>
+      </div>
     </div>
-  </section>
+
+    <!-- 📈 Comparables de mercado -->
+    <div class="result-section">
+      <div class="section-header">
+        <span class="section-icon">📈</span>
+        <span class="section-label">Comparables de mercado</span>
+      </div>
+      <div class="comparables-body" id="comparables-body">
+        Una vez calculada la tasación, aquí aparecerán referencias de operaciones recientes de la zona para contrastar el valor estimado.
+      </div>
+    </div>
+
+  </div>
+
 </main>
 
 <script>
   const API_BASE = window.location.origin;
 
-  const form = document.getElementById('form-tasacion');
-  const btnSubmit = document.getElementById('btn-submit');
-  const panelResult = document.getElementById('panel-result');
-  const coordsLive = document.getElementById('coords-live');
+  const form        = document.getElementById('form-tasacion');
+  const btnSubmit   = document.getElementById('btn-submit');
+  const resultBody  = document.getElementById('result-body');
   const zonaPreview = document.getElementById('zona-preview');
+  const latInput    = document.getElementById('lat');
+  const lonInput    = document.getElementById('lon');
 
-  const latInput = document.getElementById('lat');
-  const lonInput = document.getElementById('lon');
-
-  function actualizarCoordsLive() {
-    const lat = latInput.value || '—';
-    const lon = lonInput.value || '—';
-    coordsLive.textContent = `lat ${lat}, lon ${lon}`;
-  }
-  latInput.addEventListener('input', actualizarCoordsLive);
-  lonInput.addEventListener('input', actualizarCoordsLive);
-
+  // ── Geolocalización ──
   document.getElementById('btn-geo').addEventListener('click', () => {
     if (!navigator.geolocation) {
       zonaPreview.textContent = 'Geolocalización no disponible en este navegador.';
       return;
     }
-    zonaPreview.textContent = 'Obteniendo ubicación...';
+    zonaPreview.textContent = 'Obteniendo ubicación…';
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         latInput.value = pos.coords.latitude.toFixed(4);
         lonInput.value = pos.coords.longitude.toFixed(4);
-        actualizarCoordsLive();
-        zonaPreview.textContent = 'Ubicación cargada.';
+        zonaPreview.textContent = '✓ Ubicación cargada.';
       },
       () => { zonaPreview.textContent = 'No se pudo obtener la ubicación.'; }
     );
   });
 
+  // ── Ver zonas ──
   document.getElementById('btn-ver-zonas').addEventListener('click', async () => {
-    zonaPreview.textContent = 'Cargando zonas...';
-    try {
-      const res = await fetch(`${API_BASE}/zonas`);
-      const zonas = await res.json();
-      zonaPreview.innerHTML = zonas.map(z =>
-        `${z.nombre}: u$s${z.precio_base_m2}/m² (radio ${z.radio_km} km)`
-      ).join('<br>');
-    } catch (e) {
-      zonaPreview.textContent = 'No se pudieron cargar las zonas. ¿La API está corriendo?';
-    }
-  });
-
-  function factorRow(label, value) {
-    const pct = ((value - 1) * 100).toFixed(1);
-    const sign = pct > 0 ? '+' : '';
-    const cls = value >= 1 ? 'up' : 'down';
-    return `<div class="factor-row"><span>${label}</span><span class="val ${cls}">${sign}${pct}%</span></div>`;
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = 'Calculando...';
-
-    const body = {
-      lat: parseFloat(latInput.value),
-      lon: parseFloat(lonInput.value),
-      superficie_m2: parseFloat(document.getElementById('superficie').value),
-      frente_m: parseFloat(document.getElementById('frente').value),
-      es_esquina: document.getElementById('esquina').checked,
-    };
-    const fondo = document.getElementById('fondo').value;
-    if (fondo) body.fondo_m = parseFloat(fondo);
-    const fecha = document.getElementById('fecha-dato').value;
-    if (fecha) body.fecha_dato_zona = fecha;
-
-    try {
-      const res = await fetch(`${API_BASE}/tasar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => null);
-        throw new Error(errData?.detail ? JSON.stringify(errData.detail) : `Error ${res.status}`);
-      }
-
-      const data = await res.json();
-      const precioM2Fmt = data.precio_base_m2.toLocaleString('es-AR', { maximumFractionDigits: 0 });
-      const totalFmt = data.tasacion_estimada.toLocaleString('es-AR', { maximumFractionDigits: 0 });
-      const m2Fmt = data.precio_m2_ajustado.toLocaleString('es-AR', { maximumFractionDigits: 0 });
-
-      panelResult.innerHTML = `
-        <div class="stamp-block">
-          <div class="result-zona">${data.zona.nombre} · base u$s${precioM2Fmt}/m²</div>
-          <div class="result-total">u$s ${totalFmt}</div>
-          <div class="result-permil">u$s ${m2Fmt} /m² ajustado · ${data.superficie_m2} m²</div>
-
-          <div class="factores-table">
-            <h3>Coeficientes aplicados</h3>
-            ${factorRow('Frente', data.factores.frente)}
-            ${factorRow('Forma del lote', data.factores.forma)}
-            ${factorRow('Esquina', data.factores.esquina)}
-            ${factorRow('Antigüedad del dato', data.factores.antiguedad_dato)}
-            <div class="factor-row total"><span>Factor total</span><span>${data.factores.total}×</span></div>
-          </div>
-
-          <div class="disclaimer">
-            Estimación por fórmula configurable. No reemplaza una tasación profesional
-            ni un avalúo legal. Validar con datos de mercado y tasador matriculado.
-          </div>
-        </div>
-      `;
-    } catch (err) {
-      panelResult.innerHTML = `
-        <div class="error-block">
-          No se pudo calcular la tasación.<br><br>
-          ${err.message}<br><br>
-          Verificá que la API esté corriendo y que los datos sean correctos.
-        </div>
-      `;
-    } finally {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = 'Calcular tasación';
-    }
-  });
-</script>
-
-</body>
-          </html>
-          
+    zonaPrev
