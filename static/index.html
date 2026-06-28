@@ -21,6 +21,9 @@
     --ink-mid:    #3D5040;
     --ink-soft:   #6B7E6F;
     --ink-ghost:  #9EB4A2;
+    --warn:       #8B2E0F;
+    --warn-tint:  #FFF5F2;
+    --warn-border:#E8B4A0;
     --shadow-sm:  0 1px 4px rgba(26,77,46,.07);
     --shadow-md:  0 4px 20px rgba(26,77,46,.10);
     --shadow-lg:  0 8px 40px rgba(26,77,46,.13);
@@ -76,12 +79,18 @@
     line-height: 1.1;
   }
 
-  /* Logo SVG inline */
+  /* Logo */
   .logo-mp {
     display: flex;
     align-items: center;
     gap: 14px;
     text-decoration: none;
+  }
+
+  .logo-mp img {
+    height: 44px;
+    width: auto;
+    display: block;
   }
 
   .logo-mp svg {
@@ -258,6 +267,7 @@
   .btn-row {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
   .ghost-btn {
@@ -289,6 +299,7 @@
     font-weight: 500;
     min-height: 14px;
     padding: 4px 0;
+    line-height: 1.6;
   }
 
   /* ── Submit button ── */
@@ -334,7 +345,6 @@
     gap: 16px;
   }
 
-  /* ── Result section header (same style as form) ── */
   .result-section {
     background: var(--white);
     border: 1.5px solid var(--border);
@@ -381,6 +391,19 @@
     text-transform: uppercase;
     padding: 4px 12px;
     border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .result-zone-tag.warn {
+    background: var(--warn-tint);
+    border-color: var(--warn-border);
+    color: var(--warn);
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
     margin-bottom: 16px;
   }
 
@@ -411,6 +434,29 @@
   .result-permil strong {
     color: var(--ink-mid);
     font-weight: 600;
+  }
+
+  /* ── Breakdown (terreno / construcción / total) ── */
+  .breakdown {
+    padding: 18px 28px 4px;
+    border-top: 1.5px solid var(--border);
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .breakdown-row.principal {
+    color: var(--green-deep);
+    font-weight: 700;
+    border-top: 1.5px solid var(--border);
+    margin-top: 4px;
+    padding-top: 10px;
+    font-size: 14px;
   }
 
   /* ── Factors table ── */
@@ -468,6 +514,35 @@
     color: var(--green-deep);
   }
 
+  /* ── Servicios chips ── */
+  .servicios-section {
+    padding: 18px 28px 22px;
+    border-top: 1.5px solid var(--border);
+  }
+
+  .chip-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--green-tint2);
+    background: var(--green-tint);
+    color: var(--green-deep);
+  }
+
+  .chip.off {
+    border-color: var(--warn-border);
+    background: var(--warn-tint);
+    color: var(--warn);
+  }
+
   /* ── Disclaimer ── */
   .disclaimer {
     padding: 14px 28px;
@@ -491,28 +566,53 @@
     line-height: 1.7;
   }
 
+  .comparable-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comparable-item:last-child { border-bottom: none; }
+
+  .comparable-item .src {
+    color: var(--green-deep);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .comparable-item .dir {
+    color: var(--ink-mid);
+  }
+
+  .comparable-item .meta {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .mercado-diff {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--green-tint);
+    color: var(--green-deep);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .mercado-diff.warn {
+    background: var(--warn-tint);
+    color: var(--warn);
+  }
+
   /* ── Error ── */
   .error-block {
     padding: 20px 22px;
-    background: #FFF5F2;
-    border: 1.5px solid #E8B4A0;
+    background: var(--warn-tint);
+    border: 1.5px solid var(--warn-border);
     border-radius: 10px;
-    color: #8B2E0F;
+    color: var(--warn);
     font-size: 13px;
     line-height: 1.7;
-  }
-
-  /* ── Coords live strip ── */
-  .coords-strip {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    background: var(--green-tint);
-    border-radius: 8px;
-    font-size: 12px;
-    color: var(--green-deep);
-    font-weight: 500;
   }
 
   /* ── Responsive ── */
@@ -547,14 +647,7 @@
   </div>
 
   <a class="logo-mp" href="#" title="Macedo Propiedades">
-    <!-- SVG logo MP inline -->
-    <svg viewBox="0 0 64 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MP">
-      <!-- M -->
-      <polyline points="4,48 4,8 20,32 36,8 36,48" stroke="#1A4D2E" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
-      <!-- P -->
-      <polyline points="44,48 44,8" stroke="#1A4D2E" stroke-width="4" stroke-linecap="square" fill="none"/>
-      <path d="M44,8 Q62,8 62,20 Q62,32 44,32" stroke="#1A4D2E" stroke-width="4" stroke-linecap="square" fill="none"/>
-    </svg>
+    <img src="/static/logo.png" alt="Macedo Propiedades" onerror="this.style.display='none'">
     <div class="logo-wordmark">
       <div class="logo-name">Macedo</div>
       <div class="logo-sub">Propiedades</div>
@@ -626,6 +719,24 @@
         </div>
       </div>
 
+      <!-- 🌊 Riesgo hídrico -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">🌊</span>
+          <span class="section-label">Riesgo hídrico</span>
+        </div>
+        <div class="section-body">
+          <div class="field">
+            <label>¿El lote es inundable? <span class="opt">(opcional)</span></label>
+            <select id="inundable">
+              <option value="">— Usar el dato típico de la zona —</option>
+              <option value="true">Sí, es inundable</option>
+              <option value="false">No, no es inundable</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- 🏡 Construcción -->
       <div class="form-section">
         <div class="section-header">
@@ -633,23 +744,27 @@
           <span class="section-label">Construcción</span>
         </div>
         <div class="section-body">
+          <label class="checkbox-field">
+            <input type="checkbox" id="tiene-construccion">
+            <span>El lote tiene una construcción</span>
+          </label>
           <div class="field-row">
             <div class="field">
               <label>Superficie cubierta <span class="opt">(m², opcional)</span></label>
-              <input type="number" step="0.01" id="sup-cubierta" placeholder="0">
+              <input type="number" step="0.01" id="sup-cubierta" placeholder="120">
             </div>
             <div class="field">
               <label>Año de construcción <span class="opt">(opcional)</span></label>
-              <input type="number" step="1" id="anio-construccion" placeholder="2005" min="1900" max="2025">
+              <input type="number" step="1" id="anio-construccion" placeholder="2005" min="1900" max="2026">
             </div>
           </div>
           <div class="field">
-            <label>Estado general <span class="opt">(opcional)</span></label>
+            <label>Estado general</label>
             <select id="estado-construccion">
-              <option value="">— Sin construcción / No aplica —</option>
-              <option value="bueno">Bueno</option>
+              <option value="excelente">Excelente</option>
+              <option value="bueno" selected>Bueno</option>
               <option value="regular">Regular</option>
-              <option value="malo">A demoler / Mal estado</option>
+              <option value="malo">Malo / a demoler</option>
             </select>
           </div>
         </div>
@@ -665,7 +780,7 @@
           <div class="field-row">
             <label class="checkbox-field">
               <input type="checkbox" id="srv-agua">
-              <span>Agua corriente</span>
+              <span>Agua de red</span>
             </label>
             <label class="checkbox-field">
               <input type="checkbox" id="srv-luz">
@@ -682,20 +797,14 @@
               <span>Cloacas</span>
             </label>
           </div>
-          <div class="field-row">
-            <label class="checkbox-field">
-              <input type="checkbox" id="srv-pavimento">
-              <span>Pavimento</span>
-            </label>
-            <label class="checkbox-field">
-              <input type="checkbox" id="srv-internet">
-              <span>Internet / fibra</span>
-            </label>
-          </div>
+          <label class="checkbox-field">
+            <input type="checkbox" id="srv-transporte">
+            <span>Transporte público</span>
+          </label>
         </div>
       </div>
 
-      <!-- Fecha del dato -->
+      <!-- 📅 Fecha del dato -->
       <div class="form-section">
         <div class="section-header">
           <span class="section-icon">📅</span>
@@ -703,7 +812,7 @@
         </div>
         <div class="section-body">
           <div class="field">
-            <label>Fecha de referencia <span class="opt">(opcional — para calcular antigüedad)</span></label>
+            <label>Fecha de referencia <span class="opt">(opcional — para calcular antigüedad del dato)</span></label>
             <input type="date" id="fecha-dato">
           </div>
         </div>
@@ -720,59 +829,4 @@
     <!-- 📊 Resultado de la tasación -->
     <div class="result-section" id="result-section">
       <div class="section-header">
-        <span class="section-icon">📊</span>
-        <span class="section-label">Resultado de la tasación</span>
-      </div>
-      <div id="result-body">
-        <div class="result-empty">
-          <span class="result-empty-icon">🏷️</span>
-          Completá los datos del lote<br>y presioná <strong>Calcular tasación</strong><br>para ver el resultado aquí.
-        </div>
-      </div>
-    </div>
-
-    <!-- 📈 Comparables de mercado -->
-    <div class="result-section">
-      <div class="section-header">
-        <span class="section-icon">📈</span>
-        <span class="section-label">Comparables de mercado</span>
-      </div>
-      <div class="comparables-body" id="comparables-body">
-        Una vez calculada la tasación, aquí aparecerán referencias de operaciones recientes de la zona para contrastar el valor estimado.
-      </div>
-    </div>
-
-  </div>
-
-</main>
-
-<script>
-  const API_BASE = window.location.origin;
-
-  const form        = document.getElementById('form-tasacion');
-  const btnSubmit   = document.getElementById('btn-submit');
-  const resultBody  = document.getElementById('result-body');
-  const zonaPreview = document.getElementById('zona-preview');
-  const latInput    = document.getElementById('lat');
-  const lonInput    = document.getElementById('lon');
-
-  // ── Geolocalización ──
-  document.getElementById('btn-geo').addEventListener('click', () => {
-    if (!navigator.geolocation) {
-      zonaPreview.textContent = 'Geolocalización no disponible en este navegador.';
-      return;
-    }
-    zonaPreview.textContent = 'Obteniendo ubicación…';
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        latInput.value = pos.coords.latitude.toFixed(4);
-        lonInput.value = pos.coords.longitude.toFixed(4);
-        zonaPreview.textContent = '✓ Ubicación cargada.';
-      },
-      () => { zonaPreview.textContent = 'No se pudo obtener la ubicación.'; }
-    );
-  });
-
-  // ── Ver zonas ──
-  document.getElementById('btn-ver-zonas').addEventListener('click', async () => {
-    zonaPrev
+        <spa
