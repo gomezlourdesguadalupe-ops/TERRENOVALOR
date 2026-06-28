@@ -3,831 +3,749 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tasación de Lotes · Macedo Propiedades</title>
+<title>Tasación de Lotes — Macedo Propiedades</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Spectral+SC:wght@600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --white:      #FFFFFF;
-    --off-white:  #F7F9F7;
-    --border:     #D8E8DC;
-    --border-mid: #B2CFB9;
-    --green-deep: #1A4D2E;
-    --green-mid:  #1F5E3B;
-    --green-soft: #2E7D4F;
-    --green-tint: #EBF4EE;
-    --green-tint2:#D4EADA;
-    --ink:        #111811;
-    --ink-mid:    #3D5040;
-    --ink-soft:   #6B7E6F;
-    --ink-ghost:  #9EB4A2;
-    --warn:       #8B2E0F;
-    --warn-tint:  #FFF5F2;
-    --warn-border:#E8B4A0;
-    --shadow-sm:  0 1px 4px rgba(26,77,46,.07);
-    --shadow-md:  0 4px 20px rgba(26,77,46,.10);
-    --shadow-lg:  0 8px 40px rgba(26,77,46,.13);
+    --paper: #FFFFFF;
+    --paper-line: #DCE7DC;
+    --ink: #111111;
+    --ink-soft: #5B6B5B;
+    --topo: #2F6B3F;
+    --topo-deep: #1C4426;
+    --topo-pale: #E7F1E8;
+    --stamp: #1C4426;
+    --stamp-soft: #E7F1E8;
+    --warn: #8A4B1F;
+    --warn-soft: #F4E9DD;
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', serif;
+  }
 
   body {
-    background: var(--white);
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px);
     min-height: 100vh;
   }
 
-  /* ── Header ── */
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- Header ---------- */
   header {
-    background: var(--white);
-    border-bottom: 1.5px solid var(--border);
-    padding: 0 48px;
-    height: 76px;
+    border-bottom: 2px solid var(--ink);
+    padding: 28px 32px 20px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: var(--shadow-sm);
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
-  .header-left {
+  .brand-mark {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .brand-mark .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--topo);
+    letter-spacing: 0.08em;
+    border: 1px solid var(--topo);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Spectral SC', serif;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    margin: 0;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+  }
+
+  .coords-live {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  .brand-logo {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    align-items: flex-end;
+    gap: 4px;
   }
 
-  .header-eyebrow {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--green-soft);
-  }
-
-  .header-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: var(--green-deep);
-    letter-spacing: 0.01em;
-    line-height: 1.1;
-  }
-
-  /* Logo */
-  .logo-mp {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-decoration: none;
-  }
-
-  .logo-mp img {
-    height: 44px;
+  .brand-logo img {
+    height: 52px;
     width: auto;
     display: block;
   }
 
-  .logo-mp svg {
-    height: 44px;
-    width: auto;
-  }
-
-  .logo-wordmark {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 1px;
-  }
-
-  .logo-name {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
+  .brand-logo .brand-name {
+    font-family: 'Spectral SC', serif;
+    font-size: 13px;
+    color: var(--topo-deep);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--green-deep);
   }
 
-  .logo-sub {
-    font-size: 9px;
-    font-weight: 400;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-
-  /* ── Main layout ── */
+  /* ---------- Layout ---------- */
   main {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 40px 48px 80px;
     display: grid;
-    grid-template-columns: 520px 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-
-  /* ── Form column ── */
-  .form-col {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
     gap: 0;
+    max-width: 1180px;
+    margin: 0 auto;
   }
 
-  /* ── Section blocks ── */
-  .form-section {
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s ease;
+  @media (max-width: 880px) {
+    main { grid-template-columns: 1fr; }
+    .panel-form { border-right: none !important; }
   }
 
-  .form-section:focus-within {
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-mid);
+  .panel-form, .panel-result {
+    padding: 32px;
   }
 
-  .section-header {
-    padding: 16px 22px 14px;
-    background: var(--off-white);
-    border-bottom: 1.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .panel-form {
+    border-right: 1px dashed var(--ink-soft);
   }
 
-  .section-icon {
-    font-size: 16px;
-    line-height: 1;
-  }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-    color: var(--green-mid);
-  }
-
-  .section-body {
-    padding: 22px 22px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  /* ── Field ── */
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  .field-group {
+    margin-bottom: 22px;
   }
 
   .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
   }
 
-  .field label {
+  .field-row.tres {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ink-mid);
+    color: var(--topo-deep);
+    margin-bottom: 6px;
   }
 
-  .field label .opt {
-    font-weight: 400;
+  label .opt {
+    color: var(--ink-soft);
     text-transform: none;
-    letter-spacing: 0;
-    color: var(--ink-ghost);
-    font-size: 11px;
+    letter-spacing: normal;
   }
 
-  input[type="number"],
-  input[type="text"],
-  input[type="date"],
-  select {
+  input[type="number"], input[type="text"], input[type="date"], select {
     width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    background: var(--white);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 2px solid var(--ink);
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
     color: var(--ink);
-    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    border-radius: 0;
+  }
+
+  select {
+    appearance: none;
     -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0L5 6L10 0Z' fill='%232F6B3F'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    cursor: pointer;
   }
 
   input:focus, select:focus {
     outline: none;
-    border-color: var(--green-mid);
-    background: var(--green-tint);
-    box-shadow: 0 0 0 3px rgba(31,94,59,.10);
+    border-bottom-color: var(--topo);
+    background: var(--topo-pale);
   }
 
-  input::placeholder { color: var(--ink-ghost); }
+  input::placeholder { color: #A9B7A9; }
 
-  /* ── Checkbox ── */
-  .checkbox-field {
+  .checkbox-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
-    user-select: none;
+    margin-top: 4px;
   }
 
-  .checkbox-field input[type="checkbox"] {
+  .checkbox-row input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    border: 1.5px solid var(--border-mid);
-    border-radius: 4px;
-    accent-color: var(--green-mid);
+    accent-color: var(--topo);
     cursor: pointer;
-    flex-shrink: 0;
   }
 
-  .checkbox-field span {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink-mid);
+  .checkbox-row label {
+    margin: 0;
+    cursor: pointer;
   }
 
-  /* ── Ghost buttons ── */
-  .btn-row {
+  .map-btn-row {
     display: flex;
     gap: 10px;
+    margin-top: 6px;
     flex-wrap: wrap;
   }
 
   .ghost-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
     letter-spacing: 0.04em;
-    background: var(--white);
-    border: 1.5px solid var(--border-mid);
-    color: var(--ink-mid);
-    padding: 8px 14px;
-    border-radius: 8px;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--ink-soft);
+    color: var(--ink-soft);
+    padding: 7px 12px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.15s ease;
   }
 
   .ghost-btn:hover {
-    border-color: var(--green-mid);
-    color: var(--green-deep);
-    background: var(--green-tint);
+    border-color: var(--topo);
+    color: var(--topo-deep);
   }
 
   #zona-preview {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: var(--green-deep);
-    font-weight: 500;
-    min-height: 14px;
-    padding: 4px 0;
-    line-height: 1.6;
+    color: var(--topo-deep);
+    margin-top: 8px;
+    min-height: 16px;
   }
 
-  /* ── Submit button ── */
-  .submit-btn {
-    width: 100%;
-    padding: 16px;
-    background: var(--green-deep);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
+  /* ---------- Bloque de sección colapsable ---------- */
+  .section-block {
+    border: 1px solid var(--paper-line);
+    margin-bottom: 22px;
+  }
+
+  .section-head {
+    background: var(--topo-pale);
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 16px rgba(26,77,46,.28);
+    color: var(--topo-deep);
+    font-weight: 600;
+  }
+
+  .section-body {
+    padding: 16px 14px 4px;
+  }
+
+  .servicios-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+  }
+
+  .servicios-grid .checkbox-row { margin-top: 0; }
+
+  .hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
     margin-top: 4px;
+    line-height: 1.5;
   }
 
-  .submit-btn:hover {
-    background: var(--green-mid);
-    box-shadow: 0 6px 24px rgba(26,77,46,.36);
-    transform: translateY(-1px);
+  .construccion-extra {
+    margin-top: 14px;
+    display: none;
   }
 
-  .submit-btn:active { transform: translateY(0); }
+  .construccion-extra.visible { display: block; }
 
-  .submit-btn:disabled {
-    background: var(--ink-ghost);
-    box-shadow: none;
-    cursor: wait;
-    transform: none;
+  .submit-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 16px;
+    background: var(--topo-deep);
+    color: #FFFFFF;
+    border: none;
+    font-family: 'Spectral SC', serif;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease;
   }
 
-  /* ── Result column ── */
-  .result-col {
-    position: sticky;
-    top: 100px;
+  .submit-btn:hover { background: var(--ink); }
+  .submit-btn:disabled { background: var(--ink-soft); cursor: wait; }
+
+  /* ---------- Resultado ---------- */
+  .panel-result {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    justify-content: center;
   }
 
-  .result-section {
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .result-section .section-header {
-    background: var(--off-white);
-  }
-
-  /* ── Empty state ── */
   .result-empty {
-    padding: 48px 32px;
-    text-align: center;
-    color: var(--ink-ghost);
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
-    line-height: 1.9;
+    line-height: 1.8;
+    text-align: center;
+    padding: 40px 20px;
+    border: 1px dashed var(--paper-line);
   }
 
-  .result-empty-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-    display: block;
-    opacity: 0.5;
+  .stamp-block {
+    border: 3px solid var(--topo-deep);
+    padding: 24px;
+    position: relative;
+    background: var(--stamp-soft);
   }
 
-  /* ── Main result card ── */
-  .result-main {
-    padding: 28px 28px 22px;
-  }
-
-  .result-zone-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--green-tint);
-    border: 1px solid var(--green-tint2);
-    color: var(--green-deep);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 20px;
-    margin-bottom: 8px;
-  }
-
-  .result-zone-tag.warn {
-    background: var(--warn-tint);
-    border-color: var(--warn-border);
-    color: var(--warn);
-  }
-
-  .tag-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-
-  .result-price-label {
-    font-size: 11px;
-    font-weight: 600;
+  .stamp-block::before {
+    content: "ESTIMACIÓN";
+    position: absolute;
+    top: -11px;
+    left: 20px;
+    background: var(--paper);
+    padding: 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
+    color: var(--topo-deep);
+  }
+
+  .result-zona {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
     color: var(--ink-soft);
     margin-bottom: 4px;
   }
 
+  .result-tags {
+    display: flex;
+    gap: 8px;
+    margin: 6px 0 2px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--topo-deep);
+    color: var(--topo-deep);
+  }
+
+  .tag.warn {
+    border-color: var(--warn);
+    color: var(--warn);
+    background: var(--warn-soft);
+  }
+
   .result-total {
-    font-family: 'DM Serif Display', serif;
-    font-size: 52px;
-    color: var(--green-deep);
-    line-height: 1;
-    letter-spacing: -0.01em;
-    margin-bottom: 8px;
+    font-family: 'Spectral', serif;
+    font-weight: 700;
+    font-size: 42px;
+    color: var(--topo-deep);
+    line-height: 1.1;
+    margin: 10px 0 4px;
   }
 
   .result-permil {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     color: var(--ink-soft);
-    font-weight: 400;
   }
 
-  .result-permil strong {
-    color: var(--ink-mid);
-    font-weight: 600;
-  }
-
-  /* ── Breakdown (terreno / construcción / total) ── */
   .breakdown {
-    padding: 18px 28px 4px;
-    border-top: 1.5px solid var(--border);
+    margin-top: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
   }
 
   .breakdown-row {
     display: flex;
     justify-content: space-between;
-    padding: 7px 0;
-    font-size: 13px;
+    padding: 4px 0;
     color: var(--ink-soft);
   }
 
   .breakdown-row.principal {
-    color: var(--green-deep);
-    font-weight: 700;
-    border-top: 1.5px solid var(--border);
+    color: var(--ink);
+    font-weight: 600;
+    border-top: 1px dotted var(--paper-line);
     margin-top: 4px;
-    padding-top: 10px;
-    font-size: 14px;
+    padding-top: 8px;
   }
 
-  /* ── Factors table ── */
-  .factores-section {
-    padding: 20px 28px 24px;
-    border-top: 1.5px solid var(--border);
+  .factores-table {
+    margin-top: 22px;
   }
 
-  .factores-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+  .factores-table h3, .comparables-block h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink-soft);
-    margin-bottom: 14px;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 6px;
+    margin: 0 0 10px;
   }
 
   .factor-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--paper-line);
   }
 
-  .factor-row:last-child { border-bottom: none; }
-
-  .factor-row .factor-name { color: var(--ink-mid); }
-
-  .factor-row .val {
-    font-weight: 600;
-    font-size: 13px;
-  }
-
-  .factor-row .val.up   { color: var(--green-mid); }
-  .factor-row .val.down { color: #C1521F; }
-  .factor-row .val.neu  { color: var(--ink-soft); }
-
-  .factor-row.total-row {
-    background: var(--green-tint);
-    margin: 8px -28px 0;
-    padding: 10px 28px;
-    border-bottom: none;
-  }
-
-  .factor-row.total-row .factor-name {
+  .factor-row.total {
     font-weight: 700;
-    color: var(--green-deep);
-    font-size: 13px;
+    border-bottom: 2px solid var(--ink);
+    margin-top: 4px;
   }
 
-  .factor-row.total-row .val {
-    font-size: 15px;
-    color: var(--green-deep);
-  }
+  .factor-row .val.up { color: var(--topo-deep); }
+  .factor-row .val.down { color: var(--warn); }
 
-  /* ── Servicios chips ── */
-  .servicios-section {
-    padding: 18px 28px 22px;
-    border-top: 1.5px solid var(--border);
-  }
-
-  .chip-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .chip {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    padding: 5px 11px;
-    border-radius: 20px;
-    border: 1px solid var(--green-tint2);
-    background: var(--green-tint);
-    color: var(--green-deep);
-  }
-
-  .chip.off {
-    border-color: var(--warn-border);
-    background: var(--warn-tint);
-    color: var(--warn);
-  }
-
-  /* ── Disclaimer ── */
-  .disclaimer {
-    padding: 14px 28px;
-    background: var(--off-white);
-    border-top: 1.5px solid var(--border);
-    font-size: 11px;
-    color: var(--ink-soft);
-    line-height: 1.7;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  .disclaimer-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
-
-  /* ── Comparables section ── */
-  .comparables-body {
-    padding: 20px 22px 22px;
-    font-size: 13px;
-    color: var(--ink-soft);
-    line-height: 1.7;
+  .comparables-block {
+    margin-top: 22px;
   }
 
   .comparable-item {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--paper-line);
+    color: var(--ink-soft);
   }
-
-  .comparable-item:last-child { border-bottom: none; }
 
   .comparable-item .src {
-    color: var(--green-deep);
-    font-weight: 700;
-    font-size: 12px;
-  }
-
-  .comparable-item .dir {
-    color: var(--ink-mid);
-  }
-
-  .comparable-item .meta {
-    font-size: 12px;
-    color: var(--ink-soft);
-    margin-top: 2px;
-  }
-
-  .mercado-diff {
-    margin-top: 12px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: var(--green-tint);
-    color: var(--green-deep);
-    font-size: 12px;
+    color: var(--topo-deep);
     font-weight: 600;
   }
 
+  .mercado-diff {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 8px 10px;
+    background: var(--topo-pale);
+    color: var(--topo-deep);
+  }
+
   .mercado-diff.warn {
-    background: var(--warn-tint);
+    background: var(--warn-soft);
     color: var(--warn);
   }
 
-  /* ── Error ── */
+  .disclaimer {
+    margin-top: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    border-top: 1px dashed var(--paper-line);
+    padding-top: 14px;
+  }
+
   .error-block {
-    padding: 20px 22px;
-    background: var(--warn-tint);
-    border: 1.5px solid var(--warn-border);
-    border-radius: 10px;
+    border: 2px solid var(--warn);
     color: var(--warn);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
-    line-height: 1.7;
+    padding: 16px;
   }
 
-  /* ── Responsive ── */
-  @media (max-width: 980px) {
-    main {
-      grid-template-columns: 1fr;
-      padding: 28px 24px 60px;
-    }
-
-    .result-col { position: static; }
-
-    header { padding: 0 24px; }
-
-    .logo-wordmark { display: none; }
-  }
-
-  @media (max-width: 560px) {
-    .field-row { grid-template-columns: 1fr; }
-    .result-total { font-size: 38px; }
-    header { height: 64px; }
-    .header-title { font-size: 18px; }
+  footer {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 18px 32px 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    border-top: 1px dashed var(--paper-line);
   }
 </style>
 </head>
 <body>
 
-<!-- ══════════════ HEADER ══════════════ -->
 <header>
-  <div class="header-left">
-    <div class="header-eyebrow">N.º 01 · Modelo Estimativo</div>
-    <div class="header-title">Tasación de Lotes</div>
-  </div>
-
-  <a class="logo-mp" href="#" title="Macedo Propiedades">
-    <img src="/static/logo.png" alt="Macedo Propiedades" onerror="this.style.display='none'">
-    <div class="logo-wordmark">
-      <div class="logo-name">Macedo</div>
-      <div class="logo-sub">Propiedades</div>
+  <div class="brand-mark">
+    <span class="num">N.º 01</span>
+    <div>
+      <h1>Tasación de Lotes</h1>
+      <div class="subtitle">cálculo por zona &amp; coeficientes — modelo estimativo</div>
     </div>
-  </a>
+  </div>
+  <div class="header-right">
+    <div class="coords-live" id="coords-live">lat —, lon —</div>
+    <div class="brand-logo">
+      <!-- Reemplazá "logo.png" por el nombre real del archivo subido a /static -->
+      <img src="/static/logo.png" alt="Macedo Propiedades" onerror="this.style.display='none'">
+      <span class="brand-name">Macedo Propiedades</span>
+    </div>
+  </div>
 </header>
 
-<!-- ══════════════ MAIN ══════════════ -->
 <main>
-
-  <!-- ── FORMULARIO ── -->
-  <div class="form-col">
+  <section class="panel-form">
     <form id="form-tasacion">
 
-      <!-- 📍 Ubicación -->
-      <div class="form-section">
-        <div class="section-header">
-          <span class="section-icon">📍</span>
-          <span class="section-label">Ubicación del lote</span>
-        </div>
-        <div class="section-body">
-          <div class="field-row">
-            <div class="field">
-              <label>Latitud</label>
-              <input type="number" step="any" id="lat" placeholder="-34.6037">
-            </div>
-            <div class="field">
-              <label>Longitud</label>
-              <input type="number" step="any" id="lon" placeholder="-58.3816">
-            </div>
+      <div class="field-group">
+        <label>Ubicación del lote</label>
+        <div class="field-row">
+          <div>
+            <label class="opt">Latitud</label>
+            <input type="number" step="any" id="lat" placeholder="-34.6037">
           </div>
-          <div class="btn-row">
-            <button type="button" class="ghost-btn" id="btn-geo">
-              <span>⊙</span> Usar mi ubicación
-            </button>
-            <button type="button" class="ghost-btn" id="btn-ver-zonas">
-              <span>⊞</span> Ver zonas cargadas
-            </button>
+          <div>
+            <label class="opt">Longitud</label>
+            <input type="number" step="any" id="lon" placeholder="-58.3816">
           </div>
-          <div id="zona-preview"></div>
         </div>
+        <div class="map-btn-row">
+          <button type="button" class="ghost-btn" id="btn-geo">Usar mi ubicación</button>
+          <button type="button" class="ghost-btn" id="btn-ver-zonas">Ver zonas cargadas</button>
+        </div>
+        <div id="zona-preview"></div>
       </div>
 
-      <!-- 📐 Características del lote -->
-      <div class="form-section">
-        <div class="section-header">
-          <span class="section-icon">📐</span>
-          <span class="section-label">Características del lote</span>
-        </div>
-        <div class="section-body">
-          <div class="field">
-            <label>Superficie total <span class="opt">(m²)</span></label>
-            <input type="number" step="any" id="superficie" placeholder="300">
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Frente <span class="opt">(m)</span></label>
-              <input type="number" step="any" id="frente" placeholder="12">
-            </div>
-            <div class="field">
-              <label>Fondo <span class="opt">(m, opcional)</span></label>
-              <input type="number" step="any" id="fondo" placeholder="25">
-            </div>
-          </div>
-          <label class="checkbox-field">
-            <input type="checkbox" id="esquina">
-            <span>El lote está en esquina</span>
-          </label>
-        </div>
+      <div class="field-group">
+        <label>Superficie total <span class="opt">(m²)</span></label>
+        <input type="number" step="any" id="superficie" placeholder="300">
       </div>
 
-      <!-- 🌊 Riesgo hídrico -->
-      <div class="form-section">
-        <div class="section-header">
-          <span class="section-icon">🌊</span>
-          <span class="section-label">Riesgo hídrico</span>
-        </div>
-        <div class="section-body">
-          <div class="field">
-            <label>¿El lote es inundable? <span class="opt">(opcional)</span></label>
-            <select id="inundable">
-              <option value="">— Usar el dato típico de la zona —</option>
-              <option value="true">Sí, es inundable</option>
-              <option value="false">No, no es inundable</option>
-            </select>
+      <div class="field-group">
+        <div class="field-row">
+          <div>
+            <label>Frente <span class="opt">(m)</span></label>
+            <input type="number" step="any" id="frente" placeholder="12">
+          </div>
+          <div>
+            <label>Fondo <span class="opt">(m, opcional)</span></label>
+            <input type="number" step="any" id="fondo" placeholder="25">
           </div>
         </div>
       </div>
 
-      <!-- 🏡 Construcción -->
-      <div class="form-section">
-        <div class="section-header">
-          <span class="section-icon">🏡</span>
-          <span class="section-label">Construcción</span>
+      <div class="field-group">
+        <div class="checkbox-row">
+          <input type="checkbox" id="esquina">
+          <label for="esquina">El lote está en esquina</label>
         </div>
+      </div>
+
+      <!-- ---------- Inundabilidad ---------- -->
+      <div class="section-block">
+        <div class="section-head">Riesgo hídrico</div>
         <div class="section-body">
-          <label class="checkbox-field">
+          <label>¿El lote es inundable?</label>
+          <select id="inundable">
+            <option value="">Usar el dato típico de la zona</option>
+            <option value="true">Sí, es inundable</option>
+            <option value="false">No, no es inundable</option>
+          </select>
+          <div class="hint">Si no se especifica, se toma el antecedente histórico de la zona donde está ubicado el lote.</div>
+        </div>
+      </div>
+
+      <!-- ---------- Construcción ---------- -->
+      <div class="section-block">
+        <div class="section-head">Construcción existente</div>
+        <div class="section-body">
+          <div class="checkbox-row">
             <input type="checkbox" id="tiene-construccion">
-            <span>El lote tiene una construcción</span>
-          </label>
-          <div class="field-row">
-            <div class="field">
-              <label>Superficie cubierta <span class="opt">(m², opcional)</span></label>
-              <input type="number" step="any" id="sup-cubierta" placeholder="120">
-            </div>
-            <div class="field">
-              <label>Año de construcción <span class="opt">(opcional)</span></label>
-              <input type="number" step="1" id="anio-construccion" placeholder="2005" min="1900" max="2026">
-            </div>
+            <label for="tiene-construccion">El lote tiene una construcción</label>
           </div>
-          <div class="field">
-            <label>Estado general</label>
-            <select id="estado-construccion">
-              <option value="excelente">Excelente</option>
-              <option value="bueno" selected>Bueno</option>
-              <option value="regular">Regular</option>
-              <option value="malo">Malo / a demoler</option>
-            </select>
+
+          <div class="construccion-extra" id="construccion-extra">
+            <div class="field-row tres" style="margin-top:14px;">
+              <div>
+                <label>Estado</label>
+                <select id="estado-construccion">
+                  <option value="excelente">Excelente</option>
+                  <option value="bueno" selected>Bueno</option>
+                  <option value="regular">Regular</option>
+                  <option value="malo">Malo</option>
+                </select>
+              </div>
+              <div>
+                <label>Antigüedad <span class="opt">(años)</span></label>
+                <input type="number" step="1" min="0" id="antiguedad-construccion" placeholder="15">
+              </div>
+              <div>
+                <label>Sup. construida <span class="opt">(m²)</span></label>
+                <input type="number" step="any" min="0" id="superficie-construida" placeholder="120">
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 🚰 Servicios -->
-      <div class="form-section">
-        <div class="section-header">
-          <span class="section-icon">🚰</span>
-          <span class="section-label">Servicios disponibles</span>
-        </div>
+      <!-- ---------- Servicios ---------- -->
+      <div class="section-block">
+        <div class="section-head">Acceso a servicios públicos</div>
         <div class="section-body">
-          <div class="field-row">
-            <label class="checkbox-field">
-              <input type="checkbox" id="srv-agua">
-              <span>Agua de red</span>
-            </label>
-            <label class="checkbox-field">
-              <input type="checkbox" id="srv-luz">
-              <span>Luz eléctrica</span>
-            </label>
+          <div class="hint" style="margin-bottom:10px;">Dejá sin marcar lo que no sepas: se completa con el dato típico de la zona.</div>
+          <div class="servicios-grid">
+            <div class="checkbox-row">
+              <input type="checkbox" id="serv-luz">
+              <label for="serv-luz">Luz eléctrica</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="serv-agua">
+              <label for="serv-agua">Agua de red</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="serv-cloacas">
+              <label for="serv-cloacas">Cloacas</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="serv-gas">
+              <label for="serv-gas">Gas de red</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="serv-transporte">
+              <label for="serv-transporte">Transporte público</label>
+            </div>
           </div>
-          <div class="field-row">
-            <label class="checkbox-field">
-              <input type="checkbox" id="srv-gas">
-              <span>Gas de red</span>
-            </label>
-            <label class="checkbox-field">
-              <input type="checkbox" id="srv-cloaca">
-              <span>Cloacas</span>
-            </label>
-          </div>
-          <label class="checkbox-field">
-            <input type="checkbox" id="srv-transporte">
-            <span>Transporte público</span>
-          </label>
         </div>
       </div>
 
-      <!-- 📅 Fecha del dato -->
-      <div class="form-section">
-        <div class="section-header">
-          <span class="section-icon">📅</span>
-          <span class="section-label">Fecha del dato de zona</span>
-        </div>
-        <div class="section-body">
-          <div class="field">
-            <label>Fecha de referencia <span class="opt">(opcional — para calcular antigüedad del dato)</span></label>
-            <input type="date" id="fecha-dato">
-          </div>
-        </div>
+      <div class="field-group">
+        <label>Fecha del dato de zona <span class="opt">(opcional)</span></label>
+        <input type="date" id="fecha-dato">
       </div>
 
       <button type="submit" class="submit-btn" id="btn-submit">Calcular tasación</button>
-
     </form>
-  </div>
+  </section>
 
-  <!-- ── RESULTADO ── -->
-  <div class="result-col" id="result-col">
+  <section class="panel-result" id="panel-result">
+    <div class="result-empty" id="result-empty">
+      Completá los datos del lote<br>y presioná «Calcular tasación»<br>para ver el resultado acá.
+    </div>
+  </section>
+</main>
 
-    <!-- 📊 Resultado de la tasación -->
-    <div class="result-section" id="result-section">
-      <div class="section-header">
-        <span class="section-icon">📊</span>
-        <span
+<footer>
+  Macedo Propiedades · Estimación generada por modelo de coeficientes propio. No reemplaza una tasación profesional matriculada.
+</footer>
+
+<script>
+  // Captura cualquier error de JavaScript y lo muestra en pantalla,
+  // para poder diagnosticar sin depender de la consola del navegador.
+  window.addEventListener('error', (event) => {
+    const box = document.createElement('div');
+    box.style.position = 'fixed';
+    box.style.bottom = '0';
+    box.style.left = '0';
+    box.style.right = '0';
+    box.style.background = '#8A4B1F';
+    box.style.color = '#fff';
+    box.style.padding = '14px 18px';
+    box.style.fontFamily = 'monospace';
+    box.style.fontSize = '13px';
+    box.style.zIndex = '9999';
+    box.style.maxHeight = '40vh';
+    box.style.overflow = 'auto';
+    box.textContent = 'ERROR JS: ' + event.message + ' (línea ' + event.lineno + ', columna ' + event.colno + ')';
+    document.body.appendChild(box);
+  });
+
+  const API_BASE = window.location.origin;
+
+  const form = document.getElementById('form-tasacion');
+  const btnSubmit = document.getElementById('btn-submit');
+  const panelResult = document.getElementById('panel-result');
+  const coordsLive = document.getElementById('coords-live');
+  const zonaPreview = document.getElementById('zona-preview');
+
+  const latInput = document.getElementById('lat');
+  const lonInput = document.getElementById('lon');
+
+  const tieneConstruccion = document.getElementById('tiene-construccion');
+  const construccionExtra = document.getElementById('construccion-extra');
+
+  tieneConstruccion.addEventListener('change', () => {
+    construccionExtra.classList.toggle('visible', tieneConstruccion.checked);
+  });
+
+  function actualizarCoordsLive() {
+    const lat = latInput.value || '—';
+    const lon = lonInput.value || '—';
+    coordsLive.textContent = `lat ${lat}, lon ${lon}`;
+  }
+  latInput.addEventListener('input', actualizarCoordsLive);
+  lonInput.addEventListener('input', actualizarCoordsLive);
+
+  document.getElementById('btn-geo').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      zonaPreview.textContent = 'Geolocalización no disponible en este navegador.';
+      return;
+    }
+    zonaPreview.textContent = 'Obteniendo ubicación...';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        latInput.value = pos.coords.latitude.toFixed(4);
+        lonInput.value = pos.coords.longitude.toFixed(4);
+        actualizarCoordsLive();
+        zonaPreview.textContent = 'Ubicación cargada.';
+      },
+      () => { zonaPreview.textContent = 'No se pudo obtener la ubicación.'; }
+    );
+  });
+
+  document.getElementById('btn-ver-zonas').addEventListener('click', async () => {
+    zonaPreview.textContent = 'Cargando zonas...';
+    try {
+      const res = await fetch(`${API_BASE}/zonas`);
+      const zonas = await res.json();
+      zonaPreview.innerHTML = zonas.map(z =>
+        `${z.nombre}: u$s${z.precio_base_m2}/m² (radio ${z.radio_km} km)${z.inundable ? ' · inundable' : ''}`
+      ).join('<br>');
+    } catch (e) {
+      zonaPreview.textContent = 'No se pudieron cargar las zonas. ¿La API está corriendo?';
+   
