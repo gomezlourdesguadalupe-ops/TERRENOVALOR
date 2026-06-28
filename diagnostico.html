@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; font-size: 18px; }
+  input, button { font-size: 18px; padding: 10px; margin: 6px 0; display: block; width: 100%; }
+  #log { background: #eee; padding: 14px; margin-top: 20px; white-space: pre-wrap; border: 2px solid #333; min-height: 100px; }
+</style>
+</head>
+<body>
+
+<h2>Página de diagnóstico</h2>
+
+<p>Paso 1: tocá este botón suelto (sin formulario):</p>
+<button id="btn-suelto" type="button">Probar botón suelto</button>
+
+<hr>
+
+<p>Paso 2: completá y enviá este formulario simple:</p>
+<form id="form-test">
+  <label>Latitud</label>
+  <input type="number" step="any" id="lat-test" placeholder="-34.6037">
+  <label>Superficie</label>
+  <input type="number" step="any" id="sup-test" placeholder="300">
+  <button type="submit" id="btn-test">Enviar formulario de prueba</button>
+</form>
+
+<div id="log">Esperando acción...</div>
+
+<script>
+  const log = document.getElementById('log');
+
+  function escribir(msg) {
+    log.textContent += '\n' + new Date().toLocaleTimeString() + ' — ' + msg;
+  }
+
+  document.getElementById('btn-suelto').addEventListener('click', () => {
+    escribir('✓ Botón suelto: el click SÍ se detectó.');
+  });
+
+  document.getElementById('form-test').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const lat = document.getElementById('lat-test').value;
+    const sup = document.getElementById('sup-test').value;
+    escribir('✓ Formulario: el submit SÍ se detectó. lat=' + lat + ' sup=' + sup);
+  });
+
+  window.addEventListener('error', (event) => {
+    escribir('✗ ERROR JS: ' + event.message + ' (línea ' + event.lineno + ')');
+  });
+
+  escribir('Página cargada correctamente. JavaScript está activo.');
+</script>
+
+</body>
+</html>
